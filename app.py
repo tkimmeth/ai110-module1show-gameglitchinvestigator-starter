@@ -4,12 +4,13 @@ import streamlit as st
 def get_range_for_difficulty(difficulty: str):
     if difficulty == "Easy":
         return 1, 20
+#error b/c why is normal easier than hard? maybe normal should be 1-50 and hard should be 1-100?
     if difficulty == "Normal":
-        return 1, 100
-    if difficulty == "Hard":
         return 1, 50
-    return 1, 100
-
+        # return 1, 100
+    if difficulty == "Hard":
+        return 1, 100
+ #   return 1, 50
 
 def parse_guess(raw: str):
     if raw is None:
@@ -93,7 +94,7 @@ if "secret" not in st.session_state:
     st.session_state.secret = random.randint(low, high)
 
 if "attempts" not in st.session_state:
-    st.session_state.attempts = 1
+    st.session_state.attempts = 0 #was 1
 
 if "score" not in st.session_state:
     st.session_state.score = 0
@@ -131,18 +132,33 @@ with col2:
 with col3:
     show_hint = st.checkbox("Show hint", value=True)
 
-if new_game:
+
+def reset_game(low: int, high: int):
     st.session_state.attempts = 0
-    st.session_state.secret = random.randint(1, 100)
+    st.session_state.score = 0
+    st.session_state.status = "playing"
+    st.session_state.history = []
+    st.session_state.secret = random.randint(low, high)
+
+if new_game:
+  #  st.session_state.attempts = 0
+  #  st.session_state.secret = random.randint(1, 100)
+    reset_game(low, high)
     st.success("New game started.")
     st.rerun()
 
 if st.session_state.status != "playing":
     if st.session_state.status == "won":
         st.success("You already won. Start a new game to play again.")
-    else:
-        st.error("Game over. Start a new game to try again.")
+else:
+  #  if st.session_state.status == "lost":
+     #   st.success("You already lost. Start a new game to try again.")
+      #  st.session_state.history = []
     st.stop()
+#lets use a helper function 
+
+
+
 
 if submit:
     st.session_state.attempts += 1
